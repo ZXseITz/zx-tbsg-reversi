@@ -46,23 +46,23 @@ public class Board {
     /**
      * Checks if a field coordinate is on this board
      *
-     * @param point - field coordinate
+     * @param field - field coordinate
      * @return <code>true</code> if the field coordinate is on this board,
      *     or <code>false</code> otherwise
      */
-    public boolean covers(Vector2 point) {
-        return point.x >= 0 && point.x < 8 && point.y >= 0 && point.y < 8;
+    public boolean covers(Vector2 field) {
+        return field.x >= 0 && field.x < 8 && field.y >= 0 && field.y < 8;
     }
 
     /**
      * Returns the state of a field
      *
-     * @param point - field coordinate
+     * @param field - field coordinate
      * @return field state
      */
-    public int get(Vector2 point) {
-        if (covers(point)) {
-            return fields[getIndex(point)];
+    public int get(Vector2 field) {
+        if (covers(field)) {
+            return fields[getIndex(field)];
         }
         return FIELD_UNDEFINED;
     }
@@ -71,14 +71,14 @@ public class Board {
      * Sets the state of a field
      * The state value should be validated before this method is called
      *
-     * @param point - field coordinate
-     * @param value - field state
+     * @param field - field coordinate
+     * @param state - field state
      * @return <code>true</code> if the state was set successfully,
      *     or <code>false</code> otherwise
      */
-    public boolean set(Vector2 point, int value) {
-        if (covers(point)) {
-            fields[getIndex(point)] = value;
+    public boolean set(Vector2 field, int state) {
+        if (covers(field)) {
+            fields[getIndex(field)] = state;
             return true;
         }
         return false;

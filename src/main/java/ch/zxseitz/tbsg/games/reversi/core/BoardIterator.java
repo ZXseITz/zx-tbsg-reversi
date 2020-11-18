@@ -5,22 +5,22 @@ import java.util.Map;
 public class BoardIterator {
     private Board board;
     private Vector2 direction;
-    private Vector2 point;
+    private Vector2 field;
 
-    public BoardIterator(Board board, Vector2 direction, Vector2 point) {
+    public BoardIterator(Board board, Vector2 direction, Vector2 field) {
         this.board = board;
         this.direction = direction;
-        this.point = point;
+        this.field = field;
     }
 
-    public void set(Board board, Vector2 direction, Vector2 point) {
+    public void set(Board board, Vector2 direction, Vector2 field) {
         this.board = board;
         this.direction = direction;
-        this.point = point;
+        this.field = field;
     }
 
     public Map.Entry<Integer, Vector2> next() {
-        this.point = Vector2.add(point, direction);
-        return Map.entry(board.get(point), point);
+        this.field = Vector2.add(field, direction);
+        return Map.entry(board.get(field), field);
     }
 }
