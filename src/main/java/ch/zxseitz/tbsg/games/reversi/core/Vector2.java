@@ -12,4 +12,16 @@ public class Vector2 {
     public Vector2(Vector2 v) {
         this(v.x, v.y);
     }
+
+    public static Vector2 add(Vector2 a, Vector2 b) {
+        return new Vector2(a.x + b.x, a.y + b.y);
+    }
+
+    public static Vector2 subtract(Vector2 a, Vector2 b) {
+        return new Vector2(a.x - b.x, a.y - b.y);
+    }
+
+    public static Vector2 scale(Vector2 a, int s) {
+        return new Vector2(a.x * s, a.y * s);
+    }
 }
