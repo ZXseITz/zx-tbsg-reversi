@@ -1,4 +1,4 @@
-package ch.zxseitz.tbsg.games.reversi.lib;
+package ch.zxseitz.tbsg.games.reversi.core;
 
 public class Vector2 {
     public final int x;
