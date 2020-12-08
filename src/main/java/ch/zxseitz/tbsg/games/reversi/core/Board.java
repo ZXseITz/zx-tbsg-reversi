@@ -8,7 +8,7 @@ public class Board {
     public static final int FIELD_BLACK = 1;
     public static final int FIELD_WHITE = 2;
 
-    private static final int[] initialFields = new int[] {
+    private static final int[] initialFields = new int[]{
             0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0,
@@ -20,13 +20,14 @@ public class Board {
     };
 
     /**
-     * Calculates the field index from a field coordinate
+     * Calculates the field index.
      *
-     * @param point - field coordinate
-     * @return field index
+     * @param x - field x coordinate
+     * @param y - field y coordinate
+     * @return index value
      */
-    public static int getIndex(Vector2 point) {
-        return point.y * 8 + point.x;
+    public static int getIndex(int x, int y) {
+        return y * 8 + x;
     }
 
     private final int[] fields;
@@ -46,39 +47,39 @@ public class Board {
     /**
      * Checks if a field coordinate is on this board
      *
-     * @param field - field coordinate
+     * @param x - field x coordinate
+     * @param y - field y coordinate
      * @return <code>true</code> if the field coordinate is on this board,
-     *     or <code>false</code> otherwise
+     * or <code>false</code> otherwise
      */
-    public boolean covers(Vector2 field) {
-        return field.x >= 0 && field.x < 8 && field.y >= 0 && field.y < 8;
+    public boolean covers(int x, int y) {
+        return x >= 0 && x < 8 && y >= 0 && y < 8;
     }
 
     /**
-     * Returns the state of a field
+     * Gets the state of a specific field.
      *
-     * @param field - field coordinate
+     * @param index field index
      * @return field state
      */
-    public int get(Vector2 field) {
-        if (covers(field)) {
-            return fields[getIndex(field)];
+    public int get(int index) {
+        if (index >= 0 && index < 64) {
+            return fields[index];
         }
         return FIELD_UNDEFINED;
     }
 
     /**
-     * Sets the state of a field
-     * The state value should be validated before this method is called
+     * Sets the state of a specific field.
      *
-     * @param field - field coordinate
-     * @param state - field state
+     * @param index field index
+     * @param state field state
      * @return <code>true</code> if the state was set successfully,
-     *     or <code>false</code> otherwise
+     *   or <code>false</code> otherwise
      */
-    public boolean set(Vector2 field, int state) {
-        if (covers(field)) {
-            fields[getIndex(field)] = state;
+    public boolean set(int index, int state) {
+        if (index >= 0 && index < 64) {
+            fields[index] = state;
             return true;
         }
         return false;

@@ -4,23 +4,24 @@ import java.util.Map;
 
 public class BoardIterator {
     private Board board;
-    private Vector2 direction;
-    private Vector2 field;
+    private int xDirection, yDirection;
+    private int x, y;
 
-    public BoardIterator(Board board, Vector2 direction, Vector2 field) {
+    public BoardIterator(Board board) {
         this.board = board;
-        this.direction = direction;
-        this.field = field;
     }
 
-    public void set(Board board, Vector2 direction, Vector2 field) {
-        this.board = board;
-        this.direction = direction;
-        this.field = field;
+    public void set(int x, int y, int xDirection, int yDirection) {
+        this.x = x;
+        this.y = y;
+        this.xDirection = xDirection;
+        this.yDirection = yDirection;
     }
 
-    public Map.Entry<Integer, Vector2> next() {
-        this.field = Vector2.add(field, direction);
-        return Map.entry(board.get(field), field);
+    public Map.Entry<Integer, Integer> next() {
+        this.x += xDirection;
+        this.y += yDirection;
+        var index = Board.getIndex(x, y);
+        return Map.entry(index, board.covers(x, y) ? board.get(index) : Board.FIELD_UNDEFINED);
     }
 }
