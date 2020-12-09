@@ -24,14 +24,13 @@ public class Match<T, P> {
     private int state;
     private final ActionCollection actionCollection;
 
-    public Match(T id, P playerBlack, P playerWhite, Board board, ActionCollection actionCollection) {
+    public Match(T id, P playerBlack, P playerWhite, Board board) {
         this.id = id;
         this.playerBlack = playerBlack;
         this.playerWhite = playerWhite;
         this.board = board;
         this.history = new ArrayList<>(60);
-        this.state = STATE_NEXT_BLACK;
-        this.actionCollection = actionCollection;
+        this.actionCollection = new ActionCollection();
     }
 
     public T getId() {
@@ -62,15 +61,18 @@ public class Match<T, P> {
 
     public void init() {
         // set board initial state (othello)
-        board.set(27, 1);
-        board.set(28, 2);
-        board.set(34, 2);
+        board.set(27, 2);
+        board.set(28, 1);
         board.set(35, 1);
+        board.set(36, 2);
+
         // first black actions
-        actionCollection.add(20, 28);
-        actionCollection.add(29, 28);
-        actionCollection.add(34, 35);
-        actionCollection.add(43, 35);
+        actionCollection.add(19, 27);
+        actionCollection.add(26, 27);
+        actionCollection.add(37, 36);
+        actionCollection.add(44, 36);
+
+        state = STATE_NEXT_BLACK;
     }
 
     /**
