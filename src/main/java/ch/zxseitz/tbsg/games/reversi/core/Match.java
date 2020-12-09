@@ -73,6 +73,8 @@ public class Match<T, P> {
     public void place(P player, int x, int y) throws ReversiException {
         var playerColor = getColor(player);
         var opponentColor = 3 - playerColor;
+
+        // check current state
         if (playerColor == Board.FIELD_UNDEFINED) {
             throw new InvalidPlayerException(String.format("Player [%s] is not a member of  match [%s]", player, id));
         }
@@ -90,7 +92,7 @@ public class Match<T, P> {
         }
 
         // apply new token
-        // todo audit
+        history.add(new Audit<>(player, index));
         board.set(index, playerColor);
         for (var i : actions.get(index)) {
             board.set(i, playerColor);
@@ -113,19 +115,22 @@ public class Match<T, P> {
                     emptyFields.add(i);
             }
         }
+
         // check next opponent turn
         addActions(emptyFields, opponentColor);
         if (!actions.isEmpty()) {
             this.state = opponentColor;
             return;
         }
-        // check next own turn
+
+        // check next own turn, if opponent has no legal moves
         addActions(emptyFields, playerColor);
         if (!actions.isEmpty()) {
             this.state = playerColor;
             return;
         }
-        // check end state
+
+        // check end state, if no one has legal moves
         if (blackCount > whiteCount) {
             this.state = STATE_WON_BLACK;
         } else if (blackCount < whiteCount) {
@@ -137,6 +142,10 @@ public class Match<T, P> {
 
     public int getState() {
         return state;
+    }
+
+    public List<Audit<P>> getHistory() {
+        return history;
     }
 
     private void addActions(Set<Integer> emptyFields, int color) {

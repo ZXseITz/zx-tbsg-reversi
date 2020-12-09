@@ -3,7 +3,7 @@ package ch.zxseitz.tbsg.games.reversi.core;
 import java.util.Map;
 
 public class BoardIterator {
-    private Board board;
+    private final Board board;
     private int xDirection, yDirection;
     private int x, y;
 
@@ -21,7 +21,10 @@ public class BoardIterator {
     public Map.Entry<Integer, Integer> next() {
         this.x += xDirection;
         this.y += yDirection;
-        var index = Board.getIndex(x, y);
-        return Map.entry(index, board.covers(x, y) ? board.get(index) : Board.FIELD_UNDEFINED);
+        if (board.covers(x, y)) {
+            var index = Board.getIndex(x, y);
+            return Map.entry(index, board.get(index));
+        }
+        return Map.entry(-1, Board.FIELD_UNDEFINED);
     }
 }
