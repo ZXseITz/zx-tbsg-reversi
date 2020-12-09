@@ -30,10 +30,7 @@ public class BoardTest {
         var board = new Board();
         Assert.assertEquals(Board.FIELD_UNDEFINED, board.get(-1));
         Assert.assertEquals(Board.FIELD_EMPTY, board.get(0));
-        Assert.assertEquals(Board.FIELD_BLACK, board.get(27));
-        Assert.assertEquals(Board.FIELD_WHITE, board.get(28));
-        Assert.assertEquals(Board.FIELD_WHITE, board.get(35));
-        Assert.assertEquals(Board.FIELD_BLACK, board.get(36));
+        Assert.assertEquals(Board.FIELD_EMPTY, board.get(28));
         Assert.assertEquals(Board.FIELD_EMPTY, board.get(63));
         Assert.assertEquals(Board.FIELD_UNDEFINED, board.get(64));
     }

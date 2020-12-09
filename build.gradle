@@ -1,13 +1,13 @@
-plugins {
-    id 'java'
-}
+apply plugin: 'java'
 
-group 'org.example'
+group 'ch.zxseitz'
 version '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
 }
+
+test {}
 
 dependencies {
     testImplementation 'junit:junit:4.12'

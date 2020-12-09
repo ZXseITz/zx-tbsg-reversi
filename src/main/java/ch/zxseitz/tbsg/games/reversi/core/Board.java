@@ -8,17 +8,6 @@ public class Board {
     public static final int FIELD_BLACK = 1;
     public static final int FIELD_WHITE = 2;
 
-    private static final int[] initialFields = new int[]{
-            0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 1, 2, 0, 0, 0,
-            0, 0, 0, 2, 1, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0
-    };
-
     /**
      * Calculates the field index.
      *
@@ -34,14 +23,6 @@ public class Board {
 
     public Board() {
         fields = new int[64];
-        reset();
-    }
-
-    /**
-     * Resets the fields of this board to their initial state
-     */
-    public void reset() {
-        System.arraycopy(initialFields, 0, fields, 0, 64);
     }
 
     /**

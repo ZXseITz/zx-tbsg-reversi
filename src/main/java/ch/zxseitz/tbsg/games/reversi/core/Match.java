@@ -22,22 +22,16 @@ public class Match<T, P> {
     private final List<Audit<P>> history;
     private final Board board;
     private int state;
-    private final Map<Integer, Set<Integer>> actions;
+    private final ActionCollection actionCollection;
 
-    public Match(T id, P playerBlack, P playerWhite) {
+    public Match(T id, P playerBlack, P playerWhite, Board board, ActionCollection actionCollection) {
         this.id = id;
         this.playerBlack = playerBlack;
         this.playerWhite = playerWhite;
+        this.board = board;
         this.history = new ArrayList<>(60);
-        this.board = new Board();
         this.state = STATE_NEXT_BLACK;
-        this.actions = new TreeMap<>();
-
-        // first black actions
-        this.actions.put(20, Set.of(28));
-        this.actions.put(29, Set.of(28));
-        this.actions.put(34, Set.of(35));
-        this.actions.put(43, Set.of(35));
+        this.actionCollection = actionCollection;
     }
 
     public T getId() {
@@ -53,8 +47,37 @@ public class Match<T, P> {
     }
 
     /**
-     * @param player
-     * @return
+     * Returns the current state of this match.
+     *
+     * @return <code>1</code> black's turn, <code>2</code> white's turn,
+     *   <code>10</code> tie, <code>11</code> black won or <code>12</code> white won.
+     */
+    public int getState() {
+        return state;
+    }
+
+    public List<Audit<P>> getHistory() {
+        return history;
+    }
+
+    public void init() {
+        // set board initial state (othello)
+        board.set(27, 1);
+        board.set(28, 2);
+        board.set(34, 2);
+        board.set(35, 1);
+        // first black actions
+        actionCollection.add(20, 28);
+        actionCollection.add(29, 28);
+        actionCollection.add(34, 35);
+        actionCollection.add(43, 35);
+    }
+
+    /**
+     * Returns the color of a player.
+     *
+     * @param player player itself
+     * @return <code>1</code> black, <code>2</code> white or <code>-1</code> undefined
      */
     public int getColor(P player) {
         return player == playerBlack ? Board.FIELD_BLACK : player == playerWhite
@@ -62,13 +85,14 @@ public class Match<T, P> {
     }
 
     /**
-     * Places a new token of a player on a field.
+     * Places a new token of a player on a field and updates the internal state.
      *
      * @param player source
      * @param x      x-coordinate
      * @param y      y-coordinate
-     * @return new game state
-     * @throws ReversiException
+     * @throws InvalidPlayerException if the player is not a member of this match
+     * @throws InvalidPlaceException if the place action is not valid
+     * @throws InvalidFieldException if the field position is invalid
      */
     public void place(P player, int x, int y) throws ReversiException {
         var playerColor = getColor(player);
@@ -86,7 +110,7 @@ public class Match<T, P> {
             throw new InvalidPlaceException(String.format("Not player's [%s] turn in match [%s]", player, id));
         }
         var index = board.covers(x, y) ? Board.getIndex(x, y) : -1;
-        if (!actions.containsKey(index)) {
+        if (!actionCollection.containsIndex(index)) {
             throw new InvalidFieldException(String.format("Invalid place action of player [%s] on field (%d, %d)" +
                     "in match [%s]", player, x, y, id));
         }
@@ -94,12 +118,12 @@ public class Match<T, P> {
         // apply new token
         history.add(new Audit<>(player, index));
         board.set(index, playerColor);
-        for (var i : actions.get(index)) {
+        actionCollection.foreach(index, i -> {
             board.set(i, playerColor);
-        }
+        });
 
         // update state and actions
-        actions.clear();
+        actionCollection.clear();
         var emptyFields = new TreeSet<Integer>();
         var blackCount = 0;
         var whiteCount = 0;
@@ -118,14 +142,14 @@ public class Match<T, P> {
 
         // check next opponent turn
         addActions(emptyFields, opponentColor);
-        if (!actions.isEmpty()) {
+        if (actionCollection.anyIndices()) {
             this.state = opponentColor;
             return;
         }
 
         // check next own turn, if opponent has no legal moves
         addActions(emptyFields, playerColor);
-        if (!actions.isEmpty()) {
+        if (actionCollection.anyIndices()) {
             this.state = playerColor;
             return;
         }
@@ -138,14 +162,6 @@ public class Match<T, P> {
         } else {
             this.state = STATE_TIE;
         }
-    }
-
-    public int getState() {
-        return state;
-    }
-
-    public List<Audit<P>> getHistory() {
-        return history;
     }
 
     private void addActions(Set<Integer> emptyFields, int color) {
@@ -162,7 +178,7 @@ public class Match<T, P> {
             set.addAll(iterateStraight(it, ax, ay, -1, -1, color));
             set.addAll(iterateStraight(it, ax, ay, 0, -1, color));
             set.addAll(iterateStraight(it, ax, ay, 1, -1, color));
-            actions.put(ai, set);
+            actionCollection.add(ai, set);
         }
     }
 
