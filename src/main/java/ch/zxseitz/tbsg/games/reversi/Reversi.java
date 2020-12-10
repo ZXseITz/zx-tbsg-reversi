@@ -6,7 +6,7 @@ import ch.zxseitz.tbsg.games.TbsgWebHook;
 @TbsgGame("reversi")
 public class Reversi {
     @TbsgWebHook(path = "index", method = TbsgWebHook.Method.GET)
-    public String test() {
-        return "reversi test";
+    public String test(String json) {
+        return "reversi test: " + json;
     }
 }
