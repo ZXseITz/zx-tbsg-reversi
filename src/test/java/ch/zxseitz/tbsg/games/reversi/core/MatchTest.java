@@ -165,7 +165,7 @@ public class MatchTest {
     }
 
     @Test
-    public void testPlace() {
+    public void testPlaceNextBlack() {
         doReturn(true).when(actionCollection).containsIndex(26);
         doReturn(true).when(board).covers(2, 3);
         doAnswer((Answer<Void>) invocation -> {
@@ -223,6 +223,180 @@ public class MatchTest {
             verify(iterator, times(8)).set(eq(7), eq(7), anyInt(), anyInt());
 
             Assert.assertEquals(Match.STATE_NEXT_WHITE, match.getState());
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    @Test
+    public void testPlaceNextBlackAgain() {
+        doReturn(true).when(actionCollection).containsIndex(26);
+        doReturn(true).when(board).covers(2, 3);
+        doAnswer((Answer<Void>) invocation -> {
+            board.set(35, 1);
+            board.set(44, 1);
+            return null;
+        }).when(actionCollection).foreach(eq(26), any(Consumer.class));
+
+        var field = new int[] {
+                0, 0, 2, 2, 2, 2, 0, 0,
+                0, 0, 2, 2, 2, 1, 0, 0,
+                1, 0, 1, 1, 2, 2, 2, 0,
+                1, 2, 2, 1, 2, 1, 2, 2,
+                1, 1, 1, 1, 1, 1, 2, 0,
+                1, 2, 1, 1, 2, 2, 0, 0,
+                0, 2, 1, 1, 1, 0, 0, 0,
+                0, 0, 0, 1, 1, 1, 1, 0
+        };
+        for (var i = 0; i < field.length; i++) {
+            doReturn(field[i]).when(board).get(i);
+        }
+
+        doReturn(Map.entry(-1, -1)).when(iterator).next();
+        doReturn(false).doReturn(true)
+                .when(actionCollection).anyIndices();
+
+        try {
+            var match = new Match<>(0, "black", "white", board);
+            match.state = Match.STATE_NEXT_BLACK;
+            match.place("black", 2, 3);
+
+            verify(board, times(1)).set(35, 1);
+            verify(board, times(1)).set(44, 1);
+
+            verify(iterator, times(336)).set(anyInt(), anyInt(), anyInt(), anyInt());
+            verify(iterator, times(16)).set(eq(0), eq(0), anyInt(), anyInt());
+            verify(iterator, times(16)).set(eq(1), eq(0), anyInt(), anyInt());
+            verify(iterator, times(16)).set(eq(6), eq(0), anyInt(), anyInt());
+            verify(iterator, times(16)).set(eq(7), eq(0), anyInt(), anyInt());
+            verify(iterator, times(16)).set(eq(0), eq(1), anyInt(), anyInt());
+            verify(iterator, times(16)).set(eq(1), eq(1), anyInt(), anyInt());
+            verify(iterator, times(16)).set(eq(6), eq(1), anyInt(), anyInt());
+            verify(iterator, times(16)).set(eq(7), eq(1), anyInt(), anyInt());
+            verify(iterator, times(16)).set(eq(1), eq(2), anyInt(), anyInt());
+            verify(iterator, times(16)).set(eq(7), eq(2), anyInt(), anyInt());
+            verify(iterator, times(16)).set(eq(7), eq(4), anyInt(), anyInt());
+            verify(iterator, times(16)).set(eq(6), eq(5), anyInt(), anyInt());
+            verify(iterator, times(16)).set(eq(7), eq(5), anyInt(), anyInt());
+            verify(iterator, times(16)).set(eq(0), eq(6), anyInt(), anyInt());
+            verify(iterator, times(16)).set(eq(5), eq(6), anyInt(), anyInt());
+            verify(iterator, times(16)).set(eq(6), eq(6), anyInt(), anyInt());
+            verify(iterator, times(16)).set(eq(7), eq(6), anyInt(), anyInt());
+            verify(iterator, times(16)).set(eq(0), eq(7), anyInt(), anyInt());
+            verify(iterator, times(16)).set(eq(1), eq(7), anyInt(), anyInt());
+            verify(iterator, times(16)).set(eq(2), eq(7), anyInt(), anyInt());
+            verify(iterator, times(16)).set(eq(7), eq(7), anyInt(), anyInt());
+
+            Assert.assertEquals(Match.STATE_NEXT_BLACK, match.getState());
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    @Test
+    public void testPlaceTie() {
+        doReturn(true).when(actionCollection).containsIndex(26);
+        doReturn(true).when(board).covers(2, 3);
+        doAnswer((Answer<Void>) invocation -> null).when(actionCollection)
+                .foreach(eq(26), any(Consumer.class));
+
+        var field = new int[] {
+                0, 0, 2, 2, 2, 2, 0, 0,
+                0, 0, 2, 2, 2, 1, 0, 0,
+                1, 0, 1, 1, 2, 2, 2, 0,
+                1, 2, 2, 1, 2, 2, 2, 2,
+                1, 1, 1, 1, 1, 1, 2, 0,
+                1, 2, 1, 1, 2, 2, 0, 0,
+                0, 2, 1, 1, 1, 0, 0, 0,
+                0, 0, 0, 1, 1, 1, 0, 0
+        };
+        for (var i = 0; i < field.length; i++) {
+            doReturn(field[i]).when(board).get(i);
+        }
+
+        doReturn(Map.entry(-1, -1)).when(iterator).next();
+        doReturn(false).when(actionCollection).anyIndices();
+
+        try {
+            var match = new Match<>(0, "black", "white", board);
+            match.state = Match.STATE_NEXT_BLACK;
+            match.place("black", 2, 3);
+
+            Assert.assertEquals(Match.STATE_TIE, match.getState());
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    @Test
+    public void testBlackWon() {
+        doReturn(true).when(actionCollection).containsIndex(26);
+        doReturn(true).when(board).covers(2, 3);
+        doAnswer((Answer<Void>) invocation -> null).when(actionCollection)
+                .foreach(eq(26), any(Consumer.class));
+
+        var field = new int[] {
+                0, 0, 2, 2, 2, 2, 0, 0,
+                0, 0, 2, 2, 2, 1, 0, 0,
+                1, 0, 1, 1, 2, 2, 2, 0,
+                1, 1, 1, 1, 2, 2, 2, 2,
+                1, 1, 1, 1, 1, 1, 2, 0,
+                1, 2, 1, 1, 1, 1, 0, 0,
+                0, 2, 1, 1, 1, 0, 0, 0,
+                0, 0, 0, 1, 1, 1, 1, 0
+        };
+        for (var i = 0; i < field.length; i++) {
+            doReturn(field[i]).when(board).get(i);
+        }
+
+        doReturn(Map.entry(-1, -1)).when(iterator).next();
+        doReturn(false).when(actionCollection).anyIndices();
+
+        try {
+            var match = new Match<>(0, "black", "white", board);
+            match.state = Match.STATE_NEXT_BLACK;
+            match.place("black", 2, 3);
+
+            Assert.assertEquals(Match.STATE_WON_BLACK, match.getState());
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    @Test
+    public void testPlaceWhiteWon() {
+        doReturn(true).when(actionCollection).containsIndex(26);
+        doReturn(true).when(board).covers(2, 3);
+        doAnswer((Answer<Void>) invocation -> null).when(actionCollection)
+                .foreach(eq(26), any(Consumer.class));
+
+        var field = new int[] {
+                0, 0, 2, 2, 2, 2, 0, 0,
+                0, 0, 2, 2, 2, 1, 0, 0,
+                1, 0, 2, 2, 2, 2, 2, 0,
+                1, 2, 2, 1, 2, 2, 2, 2,
+                1, 1, 1, 1, 2, 2, 2, 0,
+                1, 2, 2, 2, 2, 2, 0, 0,
+                0, 2, 1, 1, 1, 0, 0, 0,
+                0, 0, 0, 1, 1, 1, 0, 0
+        };
+        for (var i = 0; i < field.length; i++) {
+            doReturn(field[i]).when(board).get(i);
+        }
+
+        doReturn(Map.entry(-1, -1)).when(iterator).next();
+        doReturn(false).when(actionCollection).anyIndices();
+
+        try {
+            var match = new Match<>(0, "black", "white", board);
+            match.state = Match.STATE_NEXT_BLACK;
+            match.place("black", 2, 3);
+
+            Assert.assertEquals(Match.STATE_WON_WHITE, match.getState());
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail();
