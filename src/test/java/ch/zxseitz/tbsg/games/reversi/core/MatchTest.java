@@ -7,14 +7,11 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.internal.matchers.Any;
-import org.mockito.stubbing.Answer;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.api.mockito.PowerMockito;
 
 import java.util.Map;
-import java.util.function.Consumer;
 
 import static org.mockito.Mockito.*;
 
@@ -168,11 +165,6 @@ public class MatchTest {
     public void testPlaceNextBlack() {
         doReturn(true).when(actionCollection).containsIndex(26);
         doReturn(true).when(board).covers(2, 3);
-        doAnswer((Answer<Void>) invocation -> {
-            board.set(35, 1);
-            board.set(44, 1);
-            return null;
-        }).when(actionCollection).foreach(eq(26), any(Consumer.class));
 
         var field = new int[] {
                 0, 0, 2, 2, 2, 2, 0, 0,
@@ -196,8 +188,7 @@ public class MatchTest {
             match.state = Match.STATE_NEXT_BLACK;
             match.place("black", 2, 3);
 
-            verify(board, times(1)).set(35, 1);
-            verify(board, times(1)).set(44, 1);
+            verify(actionCollection, times(1)).foreach(eq(26), any());
 
             verify(iterator, times(168)).set(anyInt(), anyInt(), anyInt(), anyInt());
             verify(iterator, times(8)).set(eq(0), eq(0), anyInt(), anyInt());
@@ -233,11 +224,6 @@ public class MatchTest {
     public void testPlaceNextBlackAgain() {
         doReturn(true).when(actionCollection).containsIndex(26);
         doReturn(true).when(board).covers(2, 3);
-        doAnswer((Answer<Void>) invocation -> {
-            board.set(35, 1);
-            board.set(44, 1);
-            return null;
-        }).when(actionCollection).foreach(eq(26), any(Consumer.class));
 
         var field = new int[] {
                 0, 0, 2, 2, 2, 2, 0, 0,
@@ -262,8 +248,7 @@ public class MatchTest {
             match.state = Match.STATE_NEXT_BLACK;
             match.place("black", 2, 3);
 
-            verify(board, times(1)).set(35, 1);
-            verify(board, times(1)).set(44, 1);
+            verify(actionCollection, times(1)).foreach(eq(26), any());
 
             verify(iterator, times(336)).set(anyInt(), anyInt(), anyInt(), anyInt());
             verify(iterator, times(16)).set(eq(0), eq(0), anyInt(), anyInt());
@@ -299,8 +284,6 @@ public class MatchTest {
     public void testPlaceTie() {
         doReturn(true).when(actionCollection).containsIndex(26);
         doReturn(true).when(board).covers(2, 3);
-        doAnswer((Answer<Void>) invocation -> null).when(actionCollection)
-                .foreach(eq(26), any(Consumer.class));
 
         var field = new int[] {
                 0, 0, 2, 2, 2, 2, 0, 0,
@@ -324,6 +307,7 @@ public class MatchTest {
             match.state = Match.STATE_NEXT_BLACK;
             match.place("black", 2, 3);
 
+            verify(actionCollection, times(1)).foreach(eq(26), any());
             Assert.assertEquals(Match.STATE_TIE, match.getState());
         } catch (Exception e) {
             e.printStackTrace();
@@ -335,8 +319,6 @@ public class MatchTest {
     public void testBlackWon() {
         doReturn(true).when(actionCollection).containsIndex(26);
         doReturn(true).when(board).covers(2, 3);
-        doAnswer((Answer<Void>) invocation -> null).when(actionCollection)
-                .foreach(eq(26), any(Consumer.class));
 
         var field = new int[] {
                 0, 0, 2, 2, 2, 2, 0, 0,
@@ -360,6 +342,7 @@ public class MatchTest {
             match.state = Match.STATE_NEXT_BLACK;
             match.place("black", 2, 3);
 
+            verify(actionCollection, times(1)).foreach(eq(26), any());
             Assert.assertEquals(Match.STATE_WON_BLACK, match.getState());
         } catch (Exception e) {
             e.printStackTrace();
@@ -371,8 +354,6 @@ public class MatchTest {
     public void testPlaceWhiteWon() {
         doReturn(true).when(actionCollection).containsIndex(26);
         doReturn(true).when(board).covers(2, 3);
-        doAnswer((Answer<Void>) invocation -> null).when(actionCollection)
-                .foreach(eq(26), any(Consumer.class));
 
         var field = new int[] {
                 0, 0, 2, 2, 2, 2, 0, 0,
@@ -396,6 +377,7 @@ public class MatchTest {
             match.state = Match.STATE_NEXT_BLACK;
             match.place("black", 2, 3);
 
+            verify(actionCollection, times(1)).foreach(eq(26), any());
             Assert.assertEquals(Match.STATE_WON_WHITE, match.getState());
         } catch (Exception e) {
             e.printStackTrace();
