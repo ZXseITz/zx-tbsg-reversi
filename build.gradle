@@ -10,6 +10,8 @@ repositories {
 test {}
 
 dependencies {
+    implementation project(':games')
+
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.powermock:powermock-api-mockito2:2.0.9'
     testImplementation 'org.powermock:powermock-module-junit4:2.0.9'
