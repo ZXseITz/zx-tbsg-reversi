@@ -21,8 +21,8 @@ public class Match<T, P> {
     private final P playerWhite;
     private final List<Audit<P>> history;
     private final Board board;
-    private int state;
     private final ActionCollection actionCollection;
+    int state;  //accessible for testing
 
     public Match(T id, P playerBlack, P playerWhite, Board board) {
         this.id = id;
@@ -105,10 +105,9 @@ public class Match<T, P> {
             throw new InvalidPlayerException(String.format("Player [%s] is not a member of  match [%s]", player, id));
         }
         if (state >= STATE_TIE) {
-            throw new InvalidPlaceException(String.format("Match %s is already finished", id));
+            throw new InvalidPlaceException(String.format("Match [%s] is already finished", id));
         }
-        if (playerColor == Board.FIELD_BLACK && state == STATE_NEXT_WHITE
-                || playerColor == Board.FIELD_WHITE && state == STATE_NEXT_BLACK) {
+        if (playerColor != state) {
             throw new InvalidPlaceException(String.format("Not player's [%s] turn in match [%s]", player, id));
         }
         var index = board.covers(x, y) ? Board.getIndex(x, y) : -1;
